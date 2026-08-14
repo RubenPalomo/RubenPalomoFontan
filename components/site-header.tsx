@@ -27,8 +27,6 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle("menu-open", isMenuOpen);
-
     const closeOnDesktop = () => {
       if (window.innerWidth > 1088) setIsMenuOpen(false);
     };
@@ -39,7 +37,6 @@ export function SiteHeader() {
     window.addEventListener("resize", closeOnDesktop);
     document.addEventListener("keydown", closeOnEscape);
     return () => {
-      document.body.classList.remove("menu-open");
       window.removeEventListener("resize", closeOnDesktop);
       document.removeEventListener("keydown", closeOnEscape);
     };

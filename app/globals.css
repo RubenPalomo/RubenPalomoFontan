@@ -48,10 +48,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body.menu-open {
-  overflow: hidden;
-}
-
 img {
   display: block;
   max-width: 100%;
@@ -1329,8 +1325,8 @@ h3 {
 
 @media (max-width: 68rem) {
   .site-navigation {
-    position: fixed;
-    top: var(--header-height);
+    position: absolute;
+    top: 100%;
     right: 0;
     left: 0;
     display: grid;
@@ -1348,6 +1344,9 @@ h3 {
 
   .site-navigation.is-open {
     max-height: calc(100vh - var(--header-height));
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 1rem 1.5rem 1.5rem;
     opacity: 1;
   }
