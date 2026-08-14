@@ -15,8 +15,8 @@ export function Process() {
           <p className="eyebrow">Cómo trabajo</p>
           <h2>Un proceso claro de principio a fin.</h2>
           <p>
-            Sin capas innecesarias. Entendemos el problema, definimos el alcance y avanzamos por
-            fases que se pueden revisar.
+            Sin capas innecesarias. Entendemos el problema, definimos el alcance y avanzamos por fases que se pueden
+            revisar.
           </p>
         </div>
 
@@ -33,8 +33,8 @@ export function Process() {
         <div className="process-principle">
           <span aria-hidden="true">“</span>
           <p>
-            El objetivo no es añadir tecnología por añadirla, sino resolver un problema real y
-            conseguir una mejora que se pueda observar.
+            El objetivo no es añadir tecnología por añadirla, sino resolver un problema real y conseguir una mejora que
+            se pueda observar.
           </p>
         </div>
       </div>

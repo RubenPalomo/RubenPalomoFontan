@@ -39,8 +39,7 @@ const services = [
     number: "04",
     category: "IA con propósito",
     title: "Inteligencia artificial",
-    intro:
-      "Asesoría e implementación para aplicar IA de forma útil, comprensible y conectada a tu actividad.",
+    intro: "Asesoría e implementación para aplicar IA de forma útil, comprensible y conectada a tu actividad.",
     items: [
       "Chatbots, asistentes y agentes de IA",
       "Clasificación y procesamiento de mensajes",
@@ -60,18 +59,12 @@ export function Services() {
             <p className="eyebrow">Servicios</p>
             <h2>La solución adecuada para cada reto.</h2>
           </div>
-          <p>
-            Puedo ayudarte desde una necesidad puntual hasta el desarrollo y evolución de una
-            herramienta completa.
-          </p>
+          <p>Puedo ayudarte desde una necesidad puntual hasta el desarrollo y evolución de una herramienta completa.</p>
         </div>
 
         <div className="services-grid">
           {services.map((service) => (
-            <article
-              className={`service-card${"dark" in service ? " service-card-dark" : ""}`}
-              key={service.number}
-            >
+            <article className={`service-card${"dark" in service ? " service-card-dark" : ""}`} key={service.number}>
               <div className="service-card-heading">
                 <span>{service.number}</span>
                 <p>{service.category}</p>

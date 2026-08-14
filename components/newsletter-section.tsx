@@ -8,9 +8,8 @@ export function NewsletterSection() {
           <p className="eyebrow">Newsletter</p>
           <h2>Ideas útiles para vender más tiempo, no más horas.</h2>
           <p>
-            Recibe contenidos prácticos sobre ofertas digitales, automatización de tareas,
-            inteligencia artificial aplicada y formas realistas de ganar productividad y alcance
-            en negocios pequeños.
+            Recibe contenidos prácticos sobre ofertas digitales, automatización de tareas, inteligencia artificial
+            aplicada y formas realistas de ganar productividad y alcance en negocios pequeños.
           </p>
           <ul className="newsletter-points">
             <li>Casos concretos para autónomos y pymes.</li>

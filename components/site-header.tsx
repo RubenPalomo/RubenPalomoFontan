@@ -60,7 +60,7 @@ export function SiteHeader() {
 
         if (visibleSection) setActiveSection(visibleSection.target.id);
       },
-      { rootMargin: "-25% 0px -60% 0px", threshold: [0, 0.2, 0.5] },
+      { rootMargin: "-25% 0px -60% 0px", threshold: [0, 0.2, 0.5] }
     );
 
     sections.forEach((section) => observer.observe(section));
@@ -72,13 +72,7 @@ export function SiteHeader() {
       <div className="container header-inner">
         <a className="brand" href="#inicio" aria-label="Rubén Palomo, volver al inicio">
           <span className="brand-mark" aria-hidden="true">
-            <Image
-              src="/images/ruben-palomo-avatar.jpg"
-              alt=""
-              width={240}
-              height={240}
-              priority
-            />
+            <Image src="/images/ruben-palomo-avatar.jpg" alt="" width={240} height={240} priority />
           </span>
           <span className="brand-copy">
             <strong>Rubén Palomo</strong>

@@ -1,4 +1,10 @@
+import type { Collection } from "mongodb";
+
+import { getMongoClient } from "@/lib/mongodb";
+
 const MAX_REQUEST_BYTES = 10_000;
+const DATABASE_NAME = "ruben_palomo";
+const COLLECTION_NAME = "newsletter_subscribers";
 
 type NewsletterPayload = {
   name?: unknown;
@@ -8,12 +14,38 @@ type NewsletterPayload = {
   source?: unknown;
 };
 
-function cleanText(value: unknown, maxLength: number) {
-  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+type NewsletterSubscriber = {
+  name: string;
+  email: string;
+  company: string | null;
+  source: string | null;
+  consent: true;
+  consentAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+let collectionPromise: Promise<Collection<NewsletterSubscriber>> | undefined;
+
+function getNewsletterCollection() {
+  collectionPromise ??= getMongoClient()
+    .then(async (client) => {
+      const collection = client.db(DATABASE_NAME).collection<NewsletterSubscriber>(COLLECTION_NAME);
+
+      await collection.createIndex({ email: 1 }, { unique: true, name: "newsletter_email_unique" });
+
+      return collection;
+    })
+    .catch((error: unknown) => {
+      collectionPromise = undefined;
+      throw error;
+    });
+
+  return collectionPromise;
 }
 
-function escapeMarkdown(value: string) {
-  return value.replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, "\\$1");
+function cleanText(value: unknown, maxLength: number) {
+  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
 }
 
 export async function POST(request: Request) {
@@ -43,62 +75,33 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "Missing or invalid fields" }, { status: 400 });
   }
 
-  const telegramToken = process.env.TELEGRAM_TOKEN;
-  const telegramId = process.env.TELEGRAM_ID;
-
-  if (!telegramToken || !telegramId) {
-    return Response.json({ ok: false, error: "Telegram is not configured" }, { status: 500 });
-  }
-
-  const text = [
-    "*Nueva suscripción a la newsletter*",
-    "",
-    `*Nombre:* ${escapeMarkdown(name)}`,
-    `*Email:* ${escapeMarkdown(email)}`,
-    company ? `*Empresa:* ${escapeMarkdown(company)}` : "",
-    "",
-    escapeMarkdown("Interés: ofertas, automatización, productividad, alcance e IA aplicada."),
-    source ? `Origen: ${escapeMarkdown(source)}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
   try {
-    const telegramResponse = await fetch(
-      `https://api.telegram.org/bot${telegramToken}/sendMessage`,
+    const collection = await getNewsletterCollection();
+    const now = new Date();
+    const result = await collection.updateOne(
+      { email },
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: telegramId,
-          text,
-          parse_mode: "MarkdownV2",
-        }),
-        cache: "no-store",
-        signal: AbortSignal.timeout(8_000),
+        $set: {
+          name,
+          email,
+          company: company || null,
+          source: source || null,
+          consent: true,
+          consentAt: now,
+          updatedAt: now,
+        },
+        $setOnInsert: {
+          createdAt: now,
+        },
       },
+      { upsert: true }
     );
 
-    if (!telegramResponse.ok) {
-      const telegramError = await telegramResponse.text();
-      console.error("[newsletter] Telegram notification failed", {
-        status: telegramResponse.status,
-        description: telegramError.slice(0, 500),
-      });
-      return Response.json(
-        { ok: false, error: "Telegram notification failed" },
-        { status: 502 },
-      );
-    }
+    return Response.json({ ok: true, created: result.upsertedCount === 1 });
   } catch (error) {
-    console.error("[newsletter] Telegram request failed", {
+    console.error("[newsletter] MongoDB persistence failed", {
       error: error instanceof Error ? error.message : String(error),
     });
-    return Response.json(
-      { ok: false, error: "Telegram notification failed" },
-      { status: 502 },
-    );
+    return Response.json({ ok: false, error: "Newsletter persistence failed" }, { status: 503 });
   }
-
-  return Response.json({ ok: true });
 }

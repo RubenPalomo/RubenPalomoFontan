@@ -10,8 +10,8 @@ export function ContactSection() {
           <p className="eyebrow">Contacto</p>
           <h2>¿Tienes un proceso que mejorar o una idea que poner en marcha?</h2>
           <p>
-            Cuéntame qué está pasando ahora, qué te gustaría conseguir y qué herramientas
-            utilizas. Revisaré el contexto y podremos valorar el siguiente paso.
+            Cuéntame qué está pasando ahora, qué te gustaría conseguir y qué herramientas utilizas. Revisaré el contexto
+            y podremos valorar el siguiente paso.
           </p>
           <div className="contact-links">
             <a href={`mailto:${siteConfig.email}`}>

@@ -40,11 +40,10 @@ export function NewsletterForm() {
       if (!response.ok) throw new Error("Newsletter request failed");
 
       form.reset();
-      setStatus({ message: "Suscripción enviada. Gracias por apuntarte.", type: "success" });
+      setStatus({ message: "Suscripción guardada. Gracias por apuntarte.", type: "success" });
     } catch {
       setStatus({
-        message:
-          "No se ha podido enviar ahora mismo. Escríbeme a ruben.palomof@gmail.com y te apunto manualmente.",
+        message: "No se ha podido enviar ahora mismo. Escríbeme a ruben.palomof@gmail.com y te apunto manualmente.",
         type: "error",
       });
     } finally {
@@ -53,12 +52,7 @@ export function NewsletterForm() {
   }
 
   return (
-    <form
-      className="newsletter-form"
-      id="newsletter-form"
-      aria-describedby="newsletter-note"
-      onSubmit={handleSubmit}
-    >
+    <form className="newsletter-form" id="newsletter-form" aria-describedby="newsletter-note" onSubmit={handleSubmit}>
       <div className="form-heading">
         <span>Apúntate</span>
         <p>Recibe la próxima edición</p>
@@ -77,20 +71,14 @@ export function NewsletterForm() {
           <label htmlFor="newsletter-company">
             Empresa <span>(opcional)</span>
           </label>
-          <input
-            id="newsletter-company"
-            name="company"
-            type="text"
-            autoComplete="organization"
-          />
+          <input id="newsletter-company" name="company" type="text" autoComplete="organization" />
         </div>
       </div>
 
       <label className="consent-field" htmlFor="newsletter-consent">
         <input id="newsletter-consent" name="consent" type="checkbox" required />
         <span>
-          Acepto recibir información sobre ofertas, automatización, productividad e inteligencia
-          artificial aplicada.
+          Acepto recibir información sobre ofertas, automatización, productividad e inteligencia artificial aplicada.
         </span>
       </label>
 
@@ -98,7 +86,7 @@ export function NewsletterForm() {
         {isPending ? "Enviando" : "Apuntarme"} <span aria-hidden="true">→</span>
       </button>
       <p className="form-note" id="newsletter-note">
-        Al enviar el formulario se notificará la suscripción a Rubén. No se publican tus datos en
+        Al enviar el formulario, tus datos se guardarán de forma privada para gestionar la newsletter. No se publican en
         la web.
       </p>
       <p className="form-status" role="status" aria-live="polite" data-status={status?.type}>

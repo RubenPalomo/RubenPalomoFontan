@@ -37,9 +37,7 @@ export function ContactForm() {
       "Gracias.",
     ].join("\n");
 
-    setStatus(
-      `Correo preparado. Si no se abre tu aplicación, escríbeme directamente a ${siteConfig.email}.`,
-    );
+    setStatus(`Correo preparado. Si no se abre tu aplicación, escríbeme directamente a ${siteConfig.email}.`);
     window.location.href = `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
@@ -102,8 +100,8 @@ export function ContactForm() {
         Preparar correo <span aria-hidden="true">↗</span>
       </button>
       <p className="form-note" id="form-note">
-        Al continuar se abrirá tu aplicación de correo con el mensaje preparado. Esta web no
-        almacena ni envía tus datos a terceros.
+        Al continuar se abrirá tu aplicación de correo con el mensaje preparado. Esta web no almacena ni envía tus datos
+        a terceros.
       </p>
       <p className="form-status" role="status" aria-live="polite">
         {status}

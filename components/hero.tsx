@@ -15,13 +15,11 @@ export function Hero() {
         <div className="hero-copy">
           <p className="eyebrow">Desarrollo web · Automatización · IA aplicada</p>
           <h1 id="hero-title">
-            Desarrollo software, automatizo procesos e implemento IA para que tu empresa{" "}
-            <span>trabaje mejor.</span>
+            Desarrollo software, automatizo procesos e implemento IA para que tu empresa <span>trabaje mejor.</span>
           </h1>
           <p className="hero-lead">
-            Creo soluciones web y software a medida, conecto herramientas y elimino tareas
-            repetitivas. También te ayudo a identificar y aplicar la inteligencia artificial allí
-            donde aporta un valor real.
+            Creo soluciones web y software a medida, conecto herramientas y elimino tareas repetitivas. También te ayudo
+            a identificar y aplicar la inteligencia artificial allí donde aporta un valor real.
           </p>
           <div className="hero-actions">
             <a className="button button-primary" href="#contacto">

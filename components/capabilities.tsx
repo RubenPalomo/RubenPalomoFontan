@@ -37,8 +37,8 @@ export function Capabilities() {
             <h2>Soluciones que puedo desarrollar.</h2>
           </div>
           <p>
-            Mi experiencia técnica abarca aplicaciones, automatización, integración de datos y
-            desarrollo en distintos entornos. La herramienta se elige según el problema.
+            Mi experiencia técnica abarca aplicaciones, automatización, integración de datos y desarrollo en distintos
+            entornos. La herramienta se elige según el problema.
           </p>
         </div>
 

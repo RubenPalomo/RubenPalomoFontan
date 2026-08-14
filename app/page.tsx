@@ -15,10 +15,7 @@ export default function Home() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializedStructuredData }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializedStructuredData }} />
       <a className="skip-link" href="#contenido">
         Saltar al contenido principal
       </a>

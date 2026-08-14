@@ -24,19 +24,17 @@ export function About() {
           <p className="eyebrow">Sobre mí</p>
           <h2>Tecnología entendida desde el problema.</h2>
           <p className="about-lead">
-            Soy desarrollador de software y me centro en convertir procesos complejos o manuales
-            en soluciones digitales claras y mantenibles.
+            Soy desarrollador de software y me centro en convertir procesos complejos o manuales en soluciones digitales
+            claras y mantenibles.
           </p>
           <p>
-            Combino desarrollo frontend y backend, trabajo con datos e integraciones y experiencia
-            en aplicaciones para distintos entornos. Me interesa especialmente la automatización y
-            el uso práctico de la inteligencia artificial para mejorar cómo trabajan las pequeñas
-            empresas.
+            Combino desarrollo frontend y backend, trabajo con datos e integraciones y experiencia en aplicaciones para
+            distintos entornos. Me interesa especialmente la automatización y el uso práctico de la inteligencia
+            artificial para mejorar cómo trabajan las pequeñas empresas.
           </p>
           <p>
-            Trabajo con comunicación directa, explicando las decisiones sin jerga innecesaria y
-            validando cada fase con quien conoce el negocio. El objetivo es que la solución encaje
-            hoy y pueda evolucionar mañana.
+            Trabajo con comunicación directa, explicando las decisiones sin jerga innecesaria y validando cada fase con
+            quien conoce el negocio. El objetivo es que la solución encaje hoy y pueda evolucionar mañana.
           </p>
           <div className="about-values">
             <div>

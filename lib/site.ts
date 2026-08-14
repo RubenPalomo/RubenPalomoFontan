@@ -26,8 +26,7 @@ export const structuredData = {
       name: siteConfig.name,
       url: siteUrl.toString(),
       image: new URL(siteConfig.socialImage, siteUrl).toString(),
-      jobTitle:
-        "Desarrollador de software y consultor de automatización e inteligencia artificial",
+      jobTitle: "Desarrollador de software y consultor de automatización e inteligencia artificial",
       sameAs: [siteConfig.linkedin, siteConfig.github],
       knowsAbout: [
         "Desarrollo web",
