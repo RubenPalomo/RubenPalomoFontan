@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     `*Email:* ${escapeMarkdown(email)}`,
     company ? `*Empresa:* ${escapeMarkdown(company)}` : "",
     "",
-    "Interés: ofertas, automatización, productividad, alcance e IA aplicada.",
+    escapeMarkdown("Interés: ofertas, automatización, productividad, alcance e IA aplicada."),
     source ? `Origen: ${escapeMarkdown(source)}` : "",
   ]
     .filter(Boolean)
@@ -80,12 +80,20 @@ export async function POST(request: Request) {
     );
 
     if (!telegramResponse.ok) {
+      const telegramError = await telegramResponse.text();
+      console.error("[newsletter] Telegram notification failed", {
+        status: telegramResponse.status,
+        description: telegramError.slice(0, 500),
+      });
       return Response.json(
         { ok: false, error: "Telegram notification failed" },
         { status: 502 },
       );
     }
-  } catch {
+  } catch (error) {
+    console.error("[newsletter] Telegram request failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return Response.json(
       { ok: false, error: "Telegram notification failed" },
       { status: 502 },
