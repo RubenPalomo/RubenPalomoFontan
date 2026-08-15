@@ -1097,6 +1097,45 @@ h3 {
   accent-color: var(--forest);
 }
 
+.newsletter-confirmation-main {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: clamp(2rem, 7vw, 6rem) 1.5rem;
+  background: radial-gradient(circle at top right, rgba(185, 217, 206, 0.75), transparent 34rem), var(--paper);
+}
+
+.newsletter-confirmation-card {
+  width: min(100%, 42rem);
+  padding: clamp(2rem, 6vw, 4rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow);
+}
+
+.newsletter-confirmation-brand {
+  display: inline-block;
+  margin-bottom: clamp(3rem, 9vw, 5.5rem);
+  color: var(--forest);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.newsletter-confirmation-card h1 {
+  max-width: 12ch;
+  margin-bottom: 1.25rem;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+}
+
+.newsletter-confirmation-card > p:not(.eyebrow) {
+  max-width: 34rem;
+  margin-bottom: 2rem;
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 2vw, 1.15rem);
+}
+
 .contact-section {
   background: var(--mint-light);
 }

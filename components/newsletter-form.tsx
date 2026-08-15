@@ -20,6 +20,7 @@ export function NewsletterForm() {
 
     const formData = new FormData(form);
     const payload = {
+      submissionId: crypto.randomUUID(),
       name: String(formData.get("name") || "").trim(),
       email: String(formData.get("email") || "").trim(),
       company: String(formData.get("company") || "").trim(),
@@ -36,11 +37,30 @@ export function NewsletterForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      const result: unknown = await response.json();
 
       if (!response.ok) throw new Error("Newsletter request failed");
 
+      const alreadySubscribed =
+        typeof result === "object" &&
+        result !== null &&
+        "alreadySubscribed" in result &&
+        result.alreadySubscribed === true;
+      const confirmationEmailFailed =
+        typeof result === "object" &&
+        result !== null &&
+        "confirmationEmailSent" in result &&
+        result.confirmationEmailSent === false;
+
       form.reset();
-      setStatus({ message: "Suscripción guardada. Gracias por apuntarte.", type: "success" });
+      setStatus({
+        message: alreadySubscribed
+          ? "Este email ya estaba registrado. Revisa el correo anterior por si aún tienes que confirmarlo."
+          : confirmationEmailFailed
+            ? "Tus datos se han guardado, pero no se ha podido enviar el email de confirmación. No se ha enviado ninguna notificación."
+            : "Te hemos enviado un email. Abre el enlace para confirmar tu suscripción.",
+        type: "success",
+      });
     } catch {
       setStatus({
         message: "No se ha podido enviar ahora mismo. Escríbeme a ruben.palomof@gmail.com y te apunto manualmente.",
@@ -86,8 +106,8 @@ export function NewsletterForm() {
         {isPending ? "Enviando" : "Apuntarme"} <span aria-hidden="true">→</span>
       </button>
       <p className="form-note" id="newsletter-note">
-        Al enviar el formulario, tus datos se guardarán de forma privada para gestionar la newsletter. No se publican en
-        la web.
+        Recibirás un email para confirmar la suscripción. Tus datos se guardarán de forma privada y no se publican en la
+        web.
       </p>
       <p className="form-status" role="status" aria-live="polite" data-status={status?.type}>
         {status?.message}

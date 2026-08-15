@@ -3,12 +3,16 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 
+import { buildContactMailtoUrl } from "@/lib/contact-mailto";
 import { siteConfig } from "@/lib/site";
 
-export function ContactForm() {
-  const [status, setStatus] = useState("");
+type Status = { message: string; type: "pending" | "success" | "error" } | null;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+export function ContactForm() {
+  const [status, setStatus] = useState<Status>(null);
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
 
@@ -23,34 +27,60 @@ export function ContactForm() {
     const email = String(formData.get("email") || "").trim();
     const projectType = String(formData.get("project-type") || "").trim();
     const message = String(formData.get("message") || "").trim();
-    const subject = `Proyecto de ${projectType} — ${name}`;
-    const body = [
-      "Hola Rubén,",
-      "",
-      `Soy ${name}${company ? `, de ${company}` : ""}.`,
-      `Mi email de contacto es ${email}.`,
-      `Tipo de proyecto: ${projectType}.`,
-      "",
-      "Contexto del proyecto:",
-      message,
-      "",
-      "Gracias.",
-    ].join("\n");
 
-    setStatus(`Correo preparado. Si no se abre tu aplicación, escríbeme directamente a ${siteConfig.email}.`);
-    window.location.href = `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setIsPending(true);
+    setStatus({ message: "Enviando consulta...", type: "pending" });
+
+    const openEmailFallback = () => {
+      const mailtoUrl = buildContactMailtoUrl(siteConfig.email, { name, company, email, projectType, message });
+      setStatus({
+        message: "Resend no está disponible. He abierto tu aplicación de correo con el mensaje preparado.",
+        type: "success",
+      });
+      window.location.href = mailtoUrl;
+    };
+
+    try {
+      let response: Response;
+      try {
+        response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            submissionId: crypto.randomUUID(),
+            name,
+            company,
+            email,
+            projectType,
+            message,
+          }),
+        });
+      } catch {
+        openEmailFallback();
+        return;
+      }
+
+      if (response.status >= 500) {
+        openEmailFallback();
+        return;
+      }
+
+      if (!response.ok) throw new Error("Contact request failed");
+
+      form.reset();
+      setStatus({ message: "Consulta enviada. Gracias, te responderé lo antes posible.", type: "success" });
+    } catch {
+      setStatus({
+        message: `No se ha podido enviar ahora mismo. Escríbeme directamente a ${siteConfig.email}.`,
+        type: "error",
+      });
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
-    <form
-      className="contact-form"
-      id="contact-form"
-      action={`mailto:${siteConfig.email}`}
-      method="post"
-      encType="text/plain"
-      aria-describedby="form-note"
-      onSubmit={handleSubmit}
-    >
+    <form className="contact-form" id="contact-form" aria-describedby="form-note" onSubmit={handleSubmit}>
       <div className="form-heading">
         <span>Hablemos</span>
         <p>Describe brevemente tu proyecto</p>
@@ -96,15 +126,15 @@ export function ContactForm() {
         </div>
       </div>
 
-      <button className="button button-primary form-submit" type="submit">
-        Preparar correo <span aria-hidden="true">↗</span>
+      <button className="button button-primary form-submit" type="submit" disabled={isPending}>
+        {isPending ? "Enviando" : "Enviar consulta"} <span aria-hidden="true">↗</span>
       </button>
       <p className="form-note" id="form-note">
-        Al continuar se abrirá tu aplicación de correo con el mensaje preparado. Esta web no almacena ni envía tus datos
-        a terceros.
+        Intentaré enviarlo de forma privada mediante Resend. Si el servicio falla, se abrirá tu aplicación de correo con
+        el mensaje preparado. No se publicará ni se almacenará en esta web.
       </p>
-      <p className="form-status" role="status" aria-live="polite">
-        {status}
+      <p className="form-status" role="status" aria-live="polite" data-status={status?.type}>
+        {status?.message}
       </p>
     </form>
   );

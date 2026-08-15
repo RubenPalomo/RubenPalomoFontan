@@ -1,12 +1,19 @@
-import type { Collection } from "mongodb";
+import EmailConfirmarSuscripcionNewsletter, {
+  getEmailConfirmarSuscripcionNewsletterText,
+} from "@/emails/EmailConfirmarSuscripcionNewsletter";
+import {
+  createNewsletterSubscription,
+  markNewsletterConfirmationEmailFailed,
+  markNewsletterConfirmationEmailSent,
+} from "@/lib/newsletter";
+import { getNotificationEmailConfig, getResendClient } from "@/lib/resend";
+import { siteUrl } from "@/lib/site";
 
-import { getMongoClient } from "@/lib/mongodb";
+export const runtime = "nodejs";
 
 const MAX_REQUEST_BYTES = 10_000;
-const DATABASE_NAME = "ruben_palomo";
-const COLLECTION_NAME = "newsletter_subscribers";
-
 type NewsletterPayload = {
+  submissionId?: unknown;
   name?: unknown;
   email?: unknown;
   company?: unknown;
@@ -14,38 +21,18 @@ type NewsletterPayload = {
   source?: unknown;
 };
 
-type NewsletterSubscriber = {
-  name: string;
-  email: string;
-  company: string | null;
-  source: string | null;
-  consent: true;
-  consentAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-let collectionPromise: Promise<Collection<NewsletterSubscriber>> | undefined;
-
-function getNewsletterCollection() {
-  collectionPromise ??= getMongoClient()
-    .then(async (client) => {
-      const collection = client.db(DATABASE_NAME).collection<NewsletterSubscriber>(COLLECTION_NAME);
-
-      await collection.createIndex({ email: 1 }, { unique: true, name: "newsletter_email_unique" });
-
-      return collection;
-    })
-    .catch((error: unknown) => {
-      collectionPromise = undefined;
-      throw error;
-    });
-
-  return collectionPromise;
-}
-
 function cleanText(value: unknown, maxLength: number) {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+}
+
+async function preserveSubscriptionAfterEmailFailure(email: string, confirmationTokenHash: string) {
+  try {
+    await markNewsletterConfirmationEmailFailed(email, confirmationTokenHash);
+  } catch (error) {
+    console.error("[newsletter] Failed to record the Resend error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 }
 
 export async function POST(request: Request) {
@@ -66,42 +53,95 @@ export async function POST(request: Request) {
   }
 
   const name = cleanText(payload.name, 120);
+  const submissionId = cleanText(payload.submissionId, 64);
   const email = cleanText(payload.email, 254).toLowerCase();
   const company = cleanText(payload.company, 160);
   const source = cleanText(payload.source, 500);
   const hasValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const hasValidSubmissionId = /^[a-z0-9-]{16,64}$/i.test(submissionId);
 
-  if (!name || !hasValidEmail || payload.consent !== true) {
+  if (!hasValidSubmissionId || !name || !hasValidEmail || payload.consent !== true) {
     return Response.json({ ok: false, error: "Missing or invalid fields" }, { status: 400 });
   }
 
-  try {
-    const collection = await getNewsletterCollection();
-    const now = new Date();
-    const result = await collection.updateOne(
-      { email },
-      {
-        $set: {
-          name,
-          email,
-          company: company || null,
-          source: source || null,
-          consent: true,
-          consentAt: now,
-          updatedAt: now,
-        },
-        $setOnInsert: {
-          createdAt: now,
-        },
-      },
-      { upsert: true }
-    );
+  let subscription: Awaited<ReturnType<typeof createNewsletterSubscription>>;
 
-    return Response.json({ ok: true, created: result.upsertedCount === 1 });
+  try {
+    subscription = await createNewsletterSubscription({ name, email, company, source });
   } catch (error) {
     console.error("[newsletter] MongoDB persistence failed", {
       error: error instanceof Error ? error.message : String(error),
     });
     return Response.json({ ok: false, error: "Newsletter persistence failed" }, { status: 503 });
+  }
+
+  if (!subscription.created) {
+    return Response.json({ ok: true, created: false, alreadySubscribed: true });
+  }
+
+  try {
+    const confirmationUrl = new URL("/api/newsletter/confirm", siteUrl);
+    if (process.env.NODE_ENV === "production" && confirmationUrl.protocol !== "https:") {
+      throw new Error("NEXT_PUBLIC_SITE_URL must use HTTPS in production");
+    }
+    confirmationUrl.searchParams.set("token", subscription.confirmationToken);
+
+    const emailProps = {
+      name,
+      confirmationUrl: confirmationUrl.toString(),
+      expiresAt: subscription.confirmationExpiresAt.toISOString(),
+    };
+    const resend = getResendClient();
+    const { from, to: replyTo } = getNotificationEmailConfig();
+    const { error } = await resend.emails.send(
+      {
+        from,
+        to: email,
+        replyTo,
+        subject: "Confirma tu suscripción a la newsletter",
+        react: EmailConfirmarSuscripcionNewsletter(emailProps),
+        text: getEmailConfirmarSuscripcionNewsletterText(emailProps),
+      },
+      { idempotencyKey: `newsletter-confirmation/${submissionId}` }
+    );
+
+    if (error) {
+      console.error("[newsletter] Resend confirmation failed", { error: error.message });
+      await preserveSubscriptionAfterEmailFailure(email, subscription.confirmationTokenHash);
+      return Response.json({
+        ok: true,
+        created: true,
+        alreadySubscribed: false,
+        confirmationEmailSent: false,
+        storedWithoutEmail: true,
+      });
+    }
+
+    try {
+      await markNewsletterConfirmationEmailSent(email, subscription.confirmationTokenHash);
+    } catch (error) {
+      console.error("[newsletter] Failed to record confirmation email delivery", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    return Response.json({
+      ok: true,
+      created: true,
+      alreadySubscribed: false,
+      confirmationEmailSent: true,
+    });
+  } catch (error) {
+    console.error("[newsletter] Email service failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    await preserveSubscriptionAfterEmailFailure(email, subscription.confirmationTokenHash);
+    return Response.json({
+      ok: true,
+      created: true,
+      alreadySubscribed: false,
+      confirmationEmailSent: false,
+      storedWithoutEmail: true,
+    });
   }
 }
