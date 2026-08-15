@@ -18,8 +18,9 @@ export type NewsletterSubscriber = {
   confirmedAt: Date | null;
   confirmationTokenHash: string;
   confirmationExpiresAt?: Date;
-  confirmationEmailStatus?: "pending" | "sent" | "failed";
+  confirmationEmailStatus?: "pending" | "sent" | "sent-to-owner" | "failed";
   confirmationEmailSentAt?: Date | null;
+  confirmationEmailFallbackSentAt?: Date | null;
   confirmationEmailFailedAt?: Date | null;
   notificationSentAt: Date | null;
   createdAt: Date;
@@ -92,6 +93,7 @@ export async function createNewsletterSubscription(input: CreateNewsletterSubscr
         confirmationExpiresAt,
         confirmationEmailStatus: "pending",
         confirmationEmailSentAt: null,
+        confirmationEmailFallbackSentAt: null,
         confirmationEmailFailedAt: null,
         notificationSentAt: null,
         createdAt: requestedAt,
@@ -136,6 +138,21 @@ export async function markNewsletterConfirmationEmailFailed(email: string, confi
         updatedAt: failedAt,
       },
       $unset: { confirmationExpiresAt: "" },
+    }
+  );
+}
+
+export async function markNewsletterConfirmationEmailSentToOwner(email: string, confirmationTokenHash: string) {
+  const collection = await getNewsletterCollection();
+  const sentAt = new Date();
+  await collection.updateOne(
+    { email, confirmationTokenHash, confirmedAt: null },
+    {
+      $set: {
+        confirmationEmailStatus: "sent-to-owner",
+        confirmationEmailFallbackSentAt: sentAt,
+        updatedAt: sentAt,
+      },
     }
   );
 }

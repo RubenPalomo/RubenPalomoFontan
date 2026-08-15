@@ -51,14 +51,21 @@ export function NewsletterForm() {
         result !== null &&
         "confirmationEmailSent" in result &&
         result.confirmationEmailSent === false;
+      const confirmationFallbackSent =
+        typeof result === "object" &&
+        result !== null &&
+        "confirmationFallbackSent" in result &&
+        result.confirmationFallbackSent === true;
 
       form.reset();
       setStatus({
         message: alreadySubscribed
           ? "Este email ya estaba registrado. Revisa el correo anterior por si aún tienes que confirmarlo."
-          : confirmationEmailFailed
-            ? "Tus datos se han guardado, pero no se ha podido enviar el email de confirmación. No se ha enviado ninguna notificación."
-            : "Te hemos enviado un email. Abre el enlace para confirmar tu suscripción.",
+          : confirmationFallbackSent
+            ? "No se ha podido enviar directamente. Rubén ha recibido el correo de confirmación para reenviártelo manualmente."
+            : confirmationEmailFailed
+              ? "Tus datos se han guardado, pero no se ha podido enviar el email de confirmación. No se ha enviado ninguna notificación."
+              : "Te hemos enviado un email. Abre el enlace para confirmar tu suscripción.",
         type: "success",
       });
     } catch {
@@ -106,8 +113,8 @@ export function NewsletterForm() {
         {isPending ? "Enviando" : "Apuntarme"} <span aria-hidden="true">→</span>
       </button>
       <p className="form-note" id="newsletter-note">
-        Recibirás un email para confirmar la suscripción. Tus datos se guardarán de forma privada y no se publican en la
-        web.
+        Recibirás un email para confirmar la suscripción. Si no puede entregarse directamente, lo recibiré para
+        reenviártelo manualmente. Tus datos se guardarán de forma privada y no se publican en la web.
       </p>
       <p className="form-status" role="status" aria-live="polite" data-status={status?.type}>
         {status?.message}

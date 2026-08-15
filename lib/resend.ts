@@ -22,3 +22,10 @@ export function getNotificationEmailConfig() {
     to: process.env.RESEND_NOTIFICATION_EMAIL?.trim() || siteConfig.email,
   };
 }
+
+export function getNewsletterFallbackEmailConfig() {
+  return {
+    from: "Rubén Palomo <onboarding@resend.dev>",
+    to: "ruben.palomof@gmail.com",
+  };
+}
