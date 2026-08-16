@@ -8,11 +8,10 @@ export function SiteFooter() {
           <a className="footer-brand" href="#inicio">
             Rubén Palomo
           </a>
-          <p>Software, automatización e IA práctica para pequeñas empresas.</p>
+          <p>Soluciones digitales sencillas para autónomos y empresas.</p>
         </div>
         <div className="footer-links">
-          <a href="#servicios">Servicios</a>
-          <a href="#proceso">Cómo trabajo</a>
+          <a href="#servicios">Qué puedo hacer</a>
           <a href="#newsletter">Newsletter</a>
           <a href="#contacto">Contacto</a>
         </div>

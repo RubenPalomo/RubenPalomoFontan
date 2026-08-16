@@ -6,16 +6,12 @@ export function NewsletterSection() {
       <div className="container newsletter-grid">
         <div className="newsletter-copy">
           <p className="eyebrow">Newsletter</p>
-          <h2>Ideas útiles para vender más tiempo, no más horas.</h2>
+          <h2>Ideas útiles para trabajar mejor.</h2>
           <p>
-            Recibe contenidos prácticos sobre ofertas digitales, automatización de tareas, inteligencia artificial
-            aplicada y formas realistas de ganar productividad y alcance en negocios pequeños.
+            Comparto aprendizajes sobre software, automatización e inteligencia artificial aplicados a problemas reales
+            de autónomos y pequeñas empresas.
           </p>
-          <ul className="newsletter-points">
-            <li>Casos concretos para autónomos y pymes.</li>
-            <li>Procesos repetitivos que se pueden simplificar.</li>
-            <li>Ideas para llegar mejor a clientes sin añadir más carga.</li>
-          </ul>
+          <p className="newsletter-promise">Sin ruido. Solo cuando tenga algo que merezca la pena contar.</p>
         </div>
 
         <NewsletterForm />

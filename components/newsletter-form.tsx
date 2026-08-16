@@ -82,7 +82,7 @@ export function NewsletterForm() {
     <form className="newsletter-form" id="newsletter-form" aria-describedby="newsletter-note" onSubmit={handleSubmit}>
       <div className="form-heading">
         <span>Apúntate</span>
-        <p>Recibe la próxima edición</p>
+        <p>Recibe la siguiente edición</p>
       </div>
 
       <div className="form-grid">
@@ -113,8 +113,7 @@ export function NewsletterForm() {
         {isPending ? "Enviando" : "Apuntarme"} <span aria-hidden="true">→</span>
       </button>
       <p className="form-note" id="newsletter-note">
-        Recibirás un email para confirmar la suscripción. Si no puede entregarse directamente, lo recibiré para
-        reenviártelo manualmente. Tus datos se guardarán de forma privada y no se publican en la web.
+        Recibirás un email para confirmar la suscripción. Tus datos se guardarán de forma privada.
       </p>
       <p className="form-status" role="status" aria-live="polite" data-status={status?.type}>
         {status?.message}

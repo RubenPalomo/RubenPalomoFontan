@@ -4,11 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const navigationItems = [
-  { href: "#problemas", label: "Qué resuelvo" },
-  { href: "#servicios", label: "Servicios" },
-  { href: "#proceso", label: "Cómo trabajo" },
-  { href: "#capacidades", label: "Capacidades" },
-  { href: "#sobre-mi", label: "Sobre mí" },
+  { href: "#servicios", label: "Qué puedo hacer" },
   { href: "#newsletter", label: "Newsletter" },
 ] as const;
 
@@ -73,7 +69,7 @@ export function SiteHeader() {
           </span>
           <span className="brand-copy">
             <strong>Rubén Palomo</strong>
-            <span>Soluciones digitales</span>
+            <span>Software para negocios</span>
           </span>
         </a>
 
@@ -111,7 +107,7 @@ export function SiteHeader() {
             aria-current={activeSection === "contacto" ? "true" : undefined}
             onClick={() => setIsMenuOpen(false)}
           >
-            Cuéntame tu proyecto
+            Contacto
           </a>
         </nav>
       </div>

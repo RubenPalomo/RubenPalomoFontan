@@ -130,8 +130,7 @@ export function ContactForm() {
         {isPending ? "Enviando" : "Enviar consulta"} <span aria-hidden="true">↗</span>
       </button>
       <p className="form-note" id="form-note">
-        Intentaré enviarlo de forma privada mediante Resend. Si el servicio falla, se abrirá tu aplicación de correo con
-        el mensaje preparado. No se publicará ni se almacenará en esta web.
+        Si el envío automático falla, se abrirá tu aplicación de correo con el mensaje preparado.
       </p>
       <p className="form-status" role="status" aria-live="polite" data-status={status?.type}>
         {status?.message}

@@ -1,10 +1,6 @@
-import { About } from "@/components/about";
-import { Capabilities } from "@/components/capabilities";
 import { ContactSection } from "@/components/contact-section";
 import { Hero } from "@/components/hero";
 import { NewsletterSection } from "@/components/newsletter-section";
-import { Problems } from "@/components/problems";
-import { Process } from "@/components/process";
 import { Services } from "@/components/services";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -22,11 +18,7 @@ export default function Home() {
       <SiteHeader />
       <main id="contenido">
         <Hero />
-        <Problems />
         <Services />
-        <Process />
-        <Capabilities />
-        <About />
         <NewsletterSection />
         <ContactSection />
       </main>
