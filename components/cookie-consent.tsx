@@ -11,6 +11,10 @@ type StoredConsent = {
   updatedAt: number;
 };
 
+type GoogleAnalyticsWindow = Window & {
+  gtag?: (command: "consent", action: "update", parameters: Record<string, "granted" | "denied">) => void;
+};
+
 let clarityInitialization: Promise<void> | undefined;
 
 function getStoredConsent(): ConsentChoice | null {
@@ -47,7 +51,19 @@ function storeConsent(choice: ConsentChoice) {
   }
 }
 
-async function initializeClarity() {
+function updateGoogleAnalyticsConsent(choice: ConsentChoice) {
+  const gtag = (window as GoogleAnalyticsWindow).gtag;
+  if (typeof gtag !== "function") return;
+
+  gtag("consent", "update", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: choice === "accepted" ? "granted" : "denied",
+  });
+}
+
+async function initializeClarity(choice: ConsentChoice | null) {
   if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") return;
 
   const projectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID?.trim() || "y5aq9f9gy8";
@@ -55,21 +71,18 @@ async function initializeClarity() {
   clarityInitialization ??= import("@microsoft/clarity")
     .then(({ default: Clarity }) => {
       Clarity.init(projectId);
-      Clarity.consentV2({ ad_Storage: "denied", analytics_Storage: "granted" });
     })
     .catch(() => {
       clarityInitialization = undefined;
     });
 
   await clarityInitialization;
-}
-
-async function withdrawClarityConsent() {
-  if (!document.getElementById("clarity-script")) return;
 
   const { default: Clarity } = await import("@microsoft/clarity");
-  Clarity.consentV2({ ad_Storage: "denied", analytics_Storage: "denied" });
-  Clarity.consent(false);
+  const analyticsStorage = choice === "accepted" ? "granted" : "denied";
+
+  Clarity.consentV2({ ad_Storage: "denied", analytics_Storage: analyticsStorage });
+  if (choice !== "accepted") Clarity.consent(false);
 }
 
 export function CookieConsent() {
@@ -84,7 +97,7 @@ export function CookieConsent() {
       setIsOpen(storedChoice === null);
       setIsReady(true);
 
-      if (storedChoice === "accepted") void initializeClarity();
+      void initializeClarity(storedChoice);
     }, 0);
 
     return () => window.clearTimeout(initializationId);
@@ -94,7 +107,8 @@ export function CookieConsent() {
     storeConsent("accepted");
     setChoice("accepted");
     setIsOpen(false);
-    await initializeClarity();
+    updateGoogleAnalyticsConsent("accepted");
+    await initializeClarity("accepted");
   }
 
   async function rejectAnalytics() {
@@ -103,9 +117,10 @@ export function CookieConsent() {
     storeConsent("rejected");
     setChoice("rejected");
     setIsOpen(false);
+    updateGoogleAnalyticsConsent("rejected");
 
     try {
-      await withdrawClarityConsent();
+      await initializeClarity("rejected");
     } finally {
       if (hadAccepted) window.location.reload();
     }
@@ -118,11 +133,10 @@ export function CookieConsent() {
       {isOpen ? (
         <section className="cookie-consent" aria-labelledby="cookie-consent-title" aria-live="polite">
           <div className="cookie-consent-copy">
-            <p className="cookie-consent-label">Tu privacidad</p>
-            <h2 id="cookie-consent-title">¿Aceptas las cookies analíticas?</h2>
+            <p className="cookie-consent-label">Cookies</p>
+            <h2 id="cookie-consent-title">Tu privacidad es importante</h2>
             <p>
-              Microsoft Clarity permite conocer visitas e interacciones mediante estadísticas, mapas de calor y
-              grabaciones de sesión. Los formularios están enmascarados y no habilitamos almacenamiento publicitario.{" "}
+              Utilizamos medición básica para conocer las visitas y, si aceptas, cookies analíticas para mejorar la web.{" "}
               <a href="/cookies">Más información</a>.
             </p>
           </div>

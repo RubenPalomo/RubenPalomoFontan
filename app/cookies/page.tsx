@@ -22,8 +22,9 @@ export default function CookiesPage() {
         <section>
           <h2>Qué utiliza esta web</h2>
           <p>
-            Esta web utiliza Microsoft Clarity únicamente cuando aceptas las cookies analíticas. Clarity permite obtener
-            estadísticas agregadas, mapas de calor y grabaciones de interacción para entender cómo mejorar la página.
+            Esta web utiliza Microsoft Clarity y Google Analytics para obtener mediciones básicas de las visitas sin
+            cookies. Si aceptas las cookies analíticas, también permite obtener estadísticas, mapas de calor y
+            grabaciones de interacción para entender cómo mejorar la página.
           </p>
           <p>
             Los campos de los formularios de newsletter y contacto están expresamente enmascarados. No se envían a
@@ -32,11 +33,16 @@ export default function CookiesPage() {
         </section>
 
         <section>
-          <h2>Cookies de Microsoft Clarity</h2>
+          <h2>Cookies analíticas</h2>
           <p>
             Clarity puede utilizar cookies como <code>_clck</code>, para mantener un identificador seudónimo de la
             visita, y <code>_clsk</code>, para agrupar páginas dentro de una misma sesión. La integración rechaza
             expresamente el almacenamiento destinado a publicidad.
+          </p>
+          <p>
+            Google Analytics puede utilizar cookies como <code>_ga</code> para distinguir visitas y elaborar
+            estadísticas de uso. El almacenamiento publicitario permanece deshabilitado tanto si aceptas como si
+            rechazas.
           </p>
           <p>
             Puedes consultar la información actualizada en la{" "}
@@ -49,14 +55,22 @@ export default function CookiesPage() {
             </a>
             .
           </p>
+          <p>
+            También puedes consultar la{" "}
+            <a href="https://policies.google.com/technologies/cookies?hl=es" target="_blank" rel="noopener noreferrer">
+              información de Google sobre el uso de cookies
+            </a>
+            .
+          </p>
         </section>
 
         <section>
           <h2>Cómo cambiar tu decisión</h2>
           <p>
             Puedes abrir de nuevo el panel mediante el botón «Configurar cookies», disponible en la parte inferior de la
-            web. Si retiras el consentimiento, se eliminan las cookies de Clarity y se detiene el seguimiento asociado.
-            La elección se conserva durante un máximo de doce meses.
+            web. Si retiras el consentimiento, se eliminan las cookies de Clarity y las siguientes visitas se miden sin
+            cookies, sin vincular las distintas páginas como una misma sesión. La elección se conserva durante un máximo
+            de doce meses.
           </p>
         </section>
 

@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 
 import { CookieConsent } from "@/components/cookie-consent";
 import { siteConfig, siteUrl } from "@/lib/site";
 
 import "./globals.css";
+
+const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim() || "G-00QTESDMTY";
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
@@ -54,6 +57,33 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body>
         {children}
         <CookieConsent />
+        <Script id="google-analytics-consent" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+
+            var analyticsStorage = 'denied';
+            try {
+              var storedConsent = JSON.parse(localStorage.getItem('ruben-palomo-cookie-consent-v1') || 'null');
+              if (storedConsent && storedConsent.choice === 'accepted') analyticsStorage = 'granted';
+            } catch (error) {}
+
+            gtag('consent', 'default', {
+              ad_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+              analytics_storage: analyticsStorage,
+              wait_for_update: 500
+            });
+          `}
+        </Script>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`} strategy="afterInteractive" />
+        <Script id="google-analytics-config" strategy="afterInteractive">
+          {`
+            gtag('js', new Date());
+            gtag('config', '${googleAnalyticsId}');
+          `}
+        </Script>
       </body>
     </html>
   );
