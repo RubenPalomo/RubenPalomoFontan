@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 
 import { buildContactMailtoUrl } from "@/lib/contact-mailto";
+import { trackClarityEvent } from "@/lib/clarity-events";
 import { siteConfig } from "@/lib/site";
 
 type Status = { message: string; type: "pending" | "success" | "error" } | null;
@@ -33,6 +34,7 @@ export function ContactForm() {
 
     const openEmailFallback = () => {
       const mailtoUrl = buildContactMailtoUrl(siteConfig.email, { name, company, email, projectType, message });
+      trackClarityEvent("contact_email_fallback");
       setStatus({
         message: "Resend no está disponible. He abierto tu aplicación de correo con el mensaje preparado.",
         type: "success",
@@ -67,6 +69,7 @@ export function ContactForm() {
 
       if (!response.ok) throw new Error("Contact request failed");
 
+      trackClarityEvent("contact_sent");
       form.reset();
       setStatus({ message: "Consulta enviada. Gracias, te responderé lo antes posible.", type: "success" });
     } catch {
@@ -80,7 +83,13 @@ export function ContactForm() {
   }
 
   return (
-    <form className="contact-form" id="contact-form" aria-describedby="form-note" onSubmit={handleSubmit}>
+    <form
+      className="contact-form"
+      id="contact-form"
+      aria-describedby="form-note"
+      data-clarity-mask="true"
+      onSubmit={handleSubmit}
+    >
       <div className="form-heading">
         <span>Hablemos</span>
         <p>Describe brevemente tu proyecto</p>

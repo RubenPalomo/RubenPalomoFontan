@@ -759,6 +759,173 @@ h3 {
   font-size: 1.05rem;
 }
 
+.cookie-consent {
+  position: fixed;
+  z-index: 400;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: min(56rem, calc(100% - 2rem));
+  margin-inline: auto;
+  padding: 1.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.85rem;
+  background: var(--ink);
+  box-shadow: 0 20px 70px rgba(20, 42, 39, 0.28);
+  color: var(--white);
+  gap: 1.5rem;
+}
+
+.cookie-consent-label {
+  margin-bottom: 0.25rem;
+  color: var(--coral);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.cookie-consent h2 {
+  margin-bottom: 0.55rem;
+  font-size: 1.25rem;
+  letter-spacing: -0.025em;
+}
+
+.cookie-consent-copy > p:last-child {
+  max-width: 42rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.79rem;
+  line-height: 1.5;
+}
+
+.cookie-consent-copy a {
+  color: var(--white);
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.18rem;
+}
+
+.cookie-consent-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(7.5rem, 1fr));
+  align-self: center;
+  gap: 0.65rem;
+}
+
+.cookie-consent-action {
+  min-height: 2.9rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--white);
+  font-size: 0.78rem;
+  font-weight: 780;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.cookie-consent-action:hover {
+  background: var(--white);
+  color: var(--ink);
+}
+
+.cookie-settings-trigger {
+  position: fixed;
+  z-index: 200;
+  bottom: 0.8rem;
+  left: 0.8rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: 0 8px 25px rgba(20, 42, 39, 0.18);
+  color: var(--white);
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.cookie-settings-trigger:hover {
+  background: var(--forest);
+}
+
+.legal-main {
+  min-height: 100vh;
+  padding: clamp(2rem, 7vw, 6rem) 1.5rem;
+  background: var(--paper);
+}
+
+.legal-card {
+  width: min(100%, 50rem);
+  margin-inline: auto;
+  padding: clamp(2rem, 6vw, 4rem);
+  border-top: 4px solid var(--coral);
+  background: var(--white);
+}
+
+.legal-brand {
+  display: inline-block;
+  margin-bottom: clamp(3rem, 9vw, 5rem);
+  color: var(--forest);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.legal-card > h1 {
+  max-width: 12ch;
+  margin-bottom: 0.75rem;
+  font-size: clamp(2.7rem, 8vw, 5rem);
+}
+
+.legal-updated {
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+}
+
+.legal-card section {
+  padding-block: 1.8rem;
+  border-top: 1px solid var(--line);
+}
+
+.legal-card section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.45rem;
+  letter-spacing: -0.025em;
+}
+
+.legal-card section p {
+  color: var(--ink-soft);
+}
+
+.legal-card section p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-card section a {
+  color: var(--forest);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18rem;
+}
+
+.legal-card code {
+  padding: 0.12rem 0.3rem;
+  border-radius: 0.25rem;
+  background: var(--paper-deep);
+  font-size: 0.9em;
+}
+
+.legal-back {
+  margin-top: 1.5rem;
+}
+
 @media (max-width: 68rem) {
   .site-navigation {
     position: absolute;
@@ -917,6 +1084,21 @@ h3 {
 
   .footer-links {
     flex-wrap: wrap;
+  }
+
+  .cookie-consent {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .cookie-consent-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 30rem) {
+  .cookie-consent-actions {
+    grid-template-columns: 1fr;
   }
 }
 

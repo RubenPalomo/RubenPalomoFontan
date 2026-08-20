@@ -3,6 +3,8 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 
+import { trackClarityEvent } from "@/lib/clarity-events";
+
 type Status = { message: string; type: "pending" | "success" | "error" } | null;
 
 export function NewsletterForm() {
@@ -57,6 +59,7 @@ export function NewsletterForm() {
         "confirmationFallbackSent" in result &&
         result.confirmationFallbackSent === true;
 
+      trackClarityEvent(alreadySubscribed ? "newsletter_already_registered" : "newsletter_registered");
       form.reset();
       setStatus({
         message: alreadySubscribed
@@ -79,7 +82,13 @@ export function NewsletterForm() {
   }
 
   return (
-    <form className="newsletter-form" id="newsletter-form" aria-describedby="newsletter-note" onSubmit={handleSubmit}>
+    <form
+      className="newsletter-form"
+      id="newsletter-form"
+      aria-describedby="newsletter-note"
+      data-clarity-mask="true"
+      onSubmit={handleSubmit}
+    >
       <div className="form-heading">
         <span>Apúntate</span>
         <p>Recibe la siguiente edición</p>

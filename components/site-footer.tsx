@@ -14,6 +14,7 @@ export function SiteFooter() {
           <a href="#servicios">Qué puedo hacer</a>
           <a href="#newsletter">Newsletter</a>
           <a href="#contacto">Contacto</a>
+          <a href="/cookies">Cookies</a>
         </div>
         <p className="copyright">
           © <CurrentYear /> Rubén Palomo
